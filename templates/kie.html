@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TCM-KeyInfoExtract</title>
+    <link rel="stylesheet" href="/static/css/public.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/headerAndFooter.css">
+    <link rel="stylesheet" href="/static/css/kie.css">
+</head>
+<body>
+
+<header>
+    <div id="header">
+        <div id="nav" style="background-color: #fff !important;">
+            <div id="logo" class="logo">
+                <img title="iMooc" src="/static/images/public/logo.png" onclick="window.open('./index.html', 'self')">
+            </div>
+            <div id="header-nav-items">
+                <li>中医临床关键信息抽取系统</li>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div id="text-input-container">
+    <textarea id="text-input" class="form-control" rows="16"></textarea>
+    <div id="extract-btn-container">
+        <a class="btn btn-default extract-btn" href="#" onclick="info_extract('HMM')">HMM抽取</a>
+        <a class="btn btn-default extract-btn" href="#" onclick="info_extract('pynlpir')">pynlpir抽取</a>
+    </div>
+    {% csrf_token %}
+</div>
+<div id="extract-result-container">
+    <div id="extract-result">
+        <div class="btn btn-danger extract-result-btn">头痛/n</div>
+    </div>
+</div>
+
+
+<footer>
+    <div class="footer-container">
+        <div class="footer-wrap idx-width">
+            <div class="footer-sns clearfix">
+                <div class="l">
+                    <a href="javascript:void(0);" class="footer-sns-weixin" target="_blank" title="微信">
+                        <i class="footer-sns-weixin-expand"></i>
+                    </a>
+                    <p>官方公众号</p>
+                </div>
+                <div class="l">
+                    <a href="http://weibo.com/u/3306361973" class="footer-sns-weibo hide-text" target="_blank" title="新浪微博">
+                    </a>
+                    <p>官方微博</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-link">
+            <!-- <a href="/about/us" target="_blank" title="关于我们">关于我们</a> -->
+            <a href="/about/cooperate" target="_blank" title="企业合作">企业合作</a>
+            <a href="/about/job" target="_blank" title="人才招聘">人才招聘</a>
+            <a href="/about/contact" target="_blank" title="联系我们">联系我们</a>
+            <a href="/about/recruit" target="_blank" title="讲师招募">讲师招募</a>
+            <a href="/about/faq" target="_blank" title="常见问题">常见问题</a>
+            <a href="/user/feedback" target="_blank" title="意见反馈">意见反馈</a>
+            <a href="http://daxue.imooc.com/" target="_blank">慕课大学</a>
+            <a href="/about/friendly" target="_blank" title="友情链接">友情链接</a>
+        </div>
+        <div class="footer-copyright">
+            <p>©&nbsp;2018&nbsp;中源团队&nbsp;&nbsp;南京中医药大学 信息技术学院</p>
+        </div>
+    </div>
+</footer>
+<script type="text/javascript" src="/static/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+    function info_extract(extract_algorithm){
+        var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+        console.log(csrf);
+        var text_for_extract = $('#text-input').val();
+        $.ajax({
+            type:"post",
+            url: {% url 'kie:kie' %},
+            async: false,
+            data: {"text_for_extract":text_for_extract, "extract_algorithm": extract_algorithm,"csrfmiddlewaretoken":csrf},
+            success: function (data) {
+                var result = JSON.parse(data);
+                var btn_danger = '<div class="btn btn-danger extract-result-btn">';
+                var btn_primary = '<div class="btn btn-primary extract-result-btn">';
+                var btn_success = '<div class="btn btn-success extract-result-btn">';
+                var btn_info = '<div class="btn btn-info extract-result-btn">';
+                var btn_warning = '<div class="btn btn-warning extract-result-btn">';
+                $("#extract-result").empty();
+                console.log(typeof(result));
+                for (var i = 0; i < result.length; i++) {
+                    for (var key in result[i]){
+                        switch (result[i][key]) {
+                            case "noun":
+                                $("#extract-result").append(btn_danger + key + "/" + result[i][key] + "</div>");
+                                break;
+                            case "punctuation mark":
+                                $("#extract-result").append(btn_primary + key + "/" + result[i][key] + "</div>");
+                                break;
+                            case "adverb":
+                                $("#extract-result").append(btn_success + key + "/" + result[i][key] + "</div>");
+                                break;
+                            case "adjective":
+                                $("#extract-result").append(btn_info + key + "/" + result[i][key] + "</div>");
+                                break;
+                            case "verb":
+                                $("#extract-result").append(btn_warning + key + "/" + result[i][key] + "</div>");
+                                break;
+                            default:
+                                $("#extract-result").append(btn_primary + key + "/" + result[i][key] + "</div>");
+                        }
+                    }
+                }
+                console.log(typeof(data));
+            }
+        });
+    }
+    $(document).ready(function () {
+    });
+</script>
+</body>
+</html>

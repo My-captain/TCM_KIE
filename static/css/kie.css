@@ -1,0 +1,41 @@
+
+#header-container{
+    width: 100%;
+    height: 100%;
+}
+#text-input-container{
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+#text-input{
+    width: 100%
+}
+#extract-btn-container{
+
+    width: 300px;
+    margin: 0 auto;
+    margin-top: 10px;
+}
+.extract-btn{
+    margin-left: 10px;
+}
+
+#extract-result-container{
+    width: 100%;
+    overflow: auto;
+    margin-bottom: 20px;
+}
+#extract-result{
+    margin: 0 auto;
+    width: 80%;
+    height: 420px;
+    border: 2px #b8b8b8 solid;
+    margin-top: 50px;
+    background-color: #FFF;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.extract-result-btn {
+    margin: 1px;
+}
